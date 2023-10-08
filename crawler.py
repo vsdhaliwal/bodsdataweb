@@ -1,66 +1,59 @@
-# import requests
-# from bs4 import BeautifulSoup
-# import threading
-
-#url1 = "https://www.opensanctions.org/datasets/default/"
-# url1 = "http://127.0.0.1:5000"
-
-# response = requests.get(url1)
-# response.raise_for_status()
-
-# soup = BeautifulSoup(response.content, 'html.parser')
-
-#link1 = soup.find("a", string="entities.ftm.json")
-#link2 = soup.find("a", string="targets.nested.json")
-
-#if link1:
-#    file_url1 = link1["href"]
-#    file_url2 = link2["href"]
-#    print(f"The URL of entities.ftm.json is: {file_url1}")
-#    print(f"The URL of targets.nested.json is: {file_url2}")
-#else:
-#    print("entities.ftm.json link not found on the page.")
-
-
-#timestamp_element = soup.find("time", class_="util_formattedDate__i6BYn")
-#if timestamp_element and timestamp_element.has_attr("datetime"):
-#    last_changed = timestamp_element["datetime"].split("T")[0]
-#    print(f"Last Changed: {last_changed}")
-#else:
-#    print("Last changed timestamp not found on the page.")
-
-# links = soup.find_all("a", string="JSON Download")
-
-# output = []
-# result = []
-
-# if links:
-#     for link in links:
-#         file_url = link["href"]
-#         card_title = link.find_previous("h5", class_="card-title serif").text.strip()
-#         name = card_title[:-12]
-#         date = card_title[-11:-1]
-#         output.append([name, date, file_url])
-# else:
-#     print("Json Zip links not found on the page.")
-
-# result.append(output[0])
-# result.append(output[1])
-# result.append(output[-1])
-
-# print(result)
-
-#def printit():
-#  threading.Timer(1.0, printit).start()
-#  get_metadata()
-#printit()
-
 import requests
 from bs4 import BeautifulSoup
 import threading
 import logging
+from datetime import datetime
+import time
+import os
+from downloader import download_multiple_files
 
-logging.basicConfig(filename='logfile.log', level=logging.INFO, format='%(asctime)s - %(message)s')
+logger1 = logging.getLogger('Logger1')
+logger1.setLevel(logging.INFO)
+handler1 = logging.FileHandler('sanctioncrawl.log')
+handler1.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(message)s')
+handler1.setFormatter(formatter)
+logger1.addHandler(handler1)
+
+logger2 = logging.getLogger('Logger2')
+logger2.setLevel(logging.INFO)
+handler2 = logging.FileHandler('ownershipcrawl.log')
+handler2.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(message)s')
+handler2.setFormatter(formatter)
+logger2.addHandler(handler2)
+
+first_output = []
+last_result = []
+
+def opensanctions():
+    url1 = "https://www.opensanctions.org/datasets/default/"
+    response = requests.get(url1)
+    response.raise_for_status()
+
+    output_1 = []
+
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    link1 = soup.find("a", string="entities.ftm.json")
+    link2 = soup.find("a", string="targets.nested.json")
+
+    if link1:
+       file_url1 = link1["href"]
+       file_url2 = link2["href"]
+    else:
+       print("links not found on the page.")
+
+
+    timestamp_element = soup.find("time", class_="util_formattedDate__i6BYn")
+    if timestamp_element and timestamp_element.has_attr("datetime"):
+       last_changed = timestamp_element["datetime"].split("T")[0]
+    else:
+       print("Last changed timestamp not found on the page.")
+
+    output_1.append([file_url1, file_url2, last_changed])
+
+    return output_1
 
 def scrape_and_process_data():
     url1 = "http://127.0.0.1:5000"
@@ -82,18 +75,60 @@ def scrape_and_process_data():
 
     return output
 
-def check_for_changes():
-    global result
-    new_result = scrape_and_process_data()
-
-    if new_result != result:
-        logging.info("Data changed: {}".format(new_result))
+def create_folder_if_not_exists(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+        print(f"Folder '{folder_path}' created successfully.")
     else:
-        logging.info("Data unchanged")
+        print(f"Folder '{folder_path}' already exists.")
 
-    result = new_result
-    threading.Timer(60.0, check_for_changes).start() 
+def check_for_changes():
+    global first_output
+    global last_result
+
+    while True:
+        new_result = scrape_and_process_data()
+        new_sanction = opensanctions()
+
+        if new_result != last_result:
+            logger2.info("Ownership Data Changed: {}".format(new_result))
+            links = []
+            filenames = []
+            for i in range(len(new_result)):
+                filename = new_result[i][0].split()
+                dater = new_result[i][1].replace("-", "_")
+                # print(new_result[i][2]) # link
+                # print("./data/" + filename[0] + "_" + dater + ".json.zip") # filename
+                links.append(new_result[i][2])
+                filenames.append("./data/" + filename[0] + "_" + dater + ".json.zip")
+                # print(links)
+                # print(filenames)
+            print("Downloading...")
+            download_multiple_files(links, filenames)
+        else:
+            logger2.info("Ownership Data Unchanged at {}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+
+        if new_sanction != first_output:
+            logger1.info("Sanctions Data Changed: {}".format(new_sanction))
+            links = []
+            filenames = []
+            links.append(new_sanction[0][0])
+            links.append(new_sanction[0][1])
+            filenames.append("./data/entities.ftm.json.zip")
+            filenames.append("./data/targets.nested.json.zip") 
+            # print(links)
+            # print(filenames)
+            print("Downloading...")
+            download_multiple_files(links, filenames)
+
+        else:
+            logger1.info("Sanctions Data Unchanged at {}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+
+        last_result = new_result
+        time.sleep(43200)
 
 if __name__ == "__main__":
-    result = scrape_and_process_data()
+    folder_path = './data'
+    create_folder_if_not_exists(folder_path)
     check_for_changes()
+

@@ -13,18 +13,8 @@ def download_large_file(url, local_filename):
                 if chunk:
                     file.write(chunk)
                     progress_bar.update(len(chunk))
+    print(f'Download complete: {local_filename}')
 
 def download_multiple_files(urls, local_filenames):
     with ThreadPoolExecutor(max_workers=len(urls)) as executor:
         executor.map(download_large_file, urls, local_filenames)
-
-urls = [
-    'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/slovakia/json.zip',
-    'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/slovakia/json.zip',
-    'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/slovakia/json.zip'
-]
-
-local_filenames = ['file1.zip', 'file2.zip', 'file3.zip']
-
-download_multiple_files(urls, local_filenames)
-print(f'Downloads complete: {local_filenames}') 
