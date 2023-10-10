@@ -5,7 +5,7 @@ import logging
 from datetime import datetime
 import time
 import os
-from downloader import download_multiple_files
+from downloader import download_and_unzip_multiple_files, download_multiple_files
 
 logger1 = logging.getLogger('Logger1')
 logger1.setLevel(logging.INFO)
@@ -85,42 +85,48 @@ def check_for_changes():
     global last_result
 
     while True:
-        new_result = scrape_and_process_data()
+        # new_result = scrape_and_process_data()
         new_sanction = opensanctions()
 
-        if new_result != last_result:
-            logger2.info("Ownership Data Changed: {}".format(new_result))
-            links = []
-            filenames = []
-            for i in range(len(new_result)):
-                filename = new_result[i][0].split()
-                dater = new_result[i][1].replace("-", "_")
-                print(new_result[i][2]) #link
-                print("./data/" + filename[0] + "_" + dater + ".json.zip") #filename
-                links.append(new_result[i][2])
-                filenames.append("./ownership_data/" + filename[0] + "_" + dater + ".json.zip")
-                print(links)
-                print(filenames)
-            print("Downloading...")
-            download_multiple_files(links, filenames)
-        else:
-            logger2.info("Ownership Data Unchanged at {}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        # if new_result != last_result:
+        #     logger2.info("Ownership Data Changed: {}".format(new_result))
+        #     links = []
+        #     filenames = []
+        #     for i in range(len(new_result)):
+        #         filename = new_result[i][0].split()
+        #         dater = new_result[i][1].replace("-", "_")
+        #         print(new_result[i][2]) #link
+        #         print("./data/" + filename[0] + "_" + dater + ".json.zip") #filename
+        #         links.append(new_result[i][2])
+        #         filenames.append("./ownership_data/" + filename[0] + "_" + dater + ".json.zip")
+        #         print(links)
+        #         print(filenames)
+        #     print("Downloading...")
+        #     download_and_unzip_multiple_files(links, filenames, "./ownership_data")
+        #     print("Unzipped")
+        #     print("Done")
+        #     print("Crawler Re-Started...")
+        # else:
+        #     logger2.info("Ownership Data Unchanged at {}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 
         if new_sanction != first_output:
             logger1.info("Sanctions Data Changed: {}".format(new_sanction))
             links = []
             filenames = []
             links.append(new_sanction[0][0])
-            filenames.append("./sanction_data/entities.ftm.json.zip") 
+            filenames.append("./sanction_data/entities.ftm.json") 
             print(links)
             print(filenames)
-            print("Downloading...")
+            print("Downloading & Unziping ...")
             download_multiple_files(links, filenames)
+            print("Unzipped")
+            print("Done")
+            print("Crawler Re-Started...")
 
         else:
             logger1.info("Sanctions Data Unchanged at {}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 
-        last_result = new_result
+        # last_result = new_result
         first_output = new_sanction
         time.sleep(43200)
 
