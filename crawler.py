@@ -36,11 +36,9 @@ def opensanctions():
     soup = BeautifulSoup(response.content, 'html.parser')
 
     link1 = soup.find("a", string="entities.ftm.json")
-    link2 = soup.find("a", string="targets.nested.json")
 
     if link1:
        file_url1 = link1["href"]
-       file_url2 = link2["href"]
     else:
        print("links not found on the page.")
 
@@ -51,7 +49,7 @@ def opensanctions():
     else:
        print("Last changed timestamp not found on the page.")
 
-    output_1.append([file_url1, file_url2, last_changed])
+    output_1.append([file_url1, last_changed])
 
     return output_1
 
@@ -97,12 +95,12 @@ def check_for_changes():
             for i in range(len(new_result)):
                 filename = new_result[i][0].split()
                 dater = new_result[i][1].replace("-", "_")
-                # print(new_result[i][2]) # link
-                # print("./data/" + filename[0] + "_" + dater + ".json.zip") # filename
+                print(new_result[i][2]) #link
+                print("./data/" + filename[0] + "_" + dater + ".json.zip") #filename
                 links.append(new_result[i][2])
-                filenames.append("./data/" + filename[0] + "_" + dater + ".json.zip")
-                # print(links)
-                # print(filenames)
+                filenames.append("./ownership_data/" + filename[0] + "_" + dater + ".json.zip")
+                print(links)
+                print(filenames)
             print("Downloading...")
             download_multiple_files(links, filenames)
         else:
@@ -113,11 +111,9 @@ def check_for_changes():
             links = []
             filenames = []
             links.append(new_sanction[0][0])
-            links.append(new_sanction[0][1])
-            filenames.append("./data/entities.ftm.json.zip")
-            filenames.append("./data/targets.nested.json.zip") 
-            # print(links)
-            # print(filenames)
+            filenames.append("./sanction_data/entities.ftm.json.zip") 
+            print(links)
+            print(filenames)
             print("Downloading...")
             download_multiple_files(links, filenames)
 
@@ -125,10 +121,13 @@ def check_for_changes():
             logger1.info("Sanctions Data Unchanged at {}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 
         last_result = new_result
+        first_output = new_sanction
         time.sleep(43200)
 
 if __name__ == "__main__":
-    folder_path = './data'
+    folder_path = './ownership_data'
+    create_folder_if_not_exists(folder_path)
+    folder_path = './sanction_data'
     create_folder_if_not_exists(folder_path)
     check_for_changes()
 
