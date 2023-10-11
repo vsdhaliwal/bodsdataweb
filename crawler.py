@@ -91,9 +91,9 @@ def check_for_changes():
         new_sanction = opensanctions()
 
         new_result = [item for item in new_result if item[2] in [
-            'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/register/json.zip',
+            #'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/register/json.zip',
             'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/latvia/json.zip',
-            'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/gleif/json.zip'
+            #'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/gleif/json.zip'
         ]]
 
         if new_result != last_result:
@@ -113,7 +113,8 @@ def check_for_changes():
             print("Crawler Re-Started...")
             print("Data insertion Started...")
             all_files = os.listdir("./ownership_data")
-            load_ownership_data(all_files)
+            full_paths = [os.path.join("./ownership_data", file) for file in all_files]
+            load_ownership_data(full_paths)
             print("Data insertion Done")
 
         else:
