@@ -420,33 +420,75 @@ thing_schema = {
 
 
 ownership_or_control_statement_schema = {
-    "statementID": "",
-    "statementType": "ownershipOrControlStatement",
-    "statementDate": "",
-    "isComponent": False,
-    "componentStatementIDs": [],
+    "statementID": "string",
+    "statementType": "string",
+    "statementDate": "string",
+    "isComponent": "boolean",
+    "componentStatementIDs": ["string"],
     "subject": {
-        "describedByEntityStatement": ""
+        "describedByEntityStatement": "string"
     },
     "interestedParty": {
-        "describedByEntityStatement": "",
-        "describedByPersonStatement": "",
+        "describedByEntityStatement": "string",
+        "describedByPersonStatement": "string",
         "unspecified": {
-            "reason": "",
-            "description": ""
+            "reason": "string",
+            "description": "string"
         }
     },
-    "interests": [],
+    "interests": [
+        {
+            "type": "string",
+            "interestLevel": "string",
+            "beneficialOwnershipOrControl": "boolean",
+            "details": "string",
+            "share": {
+                "exact": "number",
+                "maximum": "number",
+                "minimum": "number",
+                "exclusiveMinimum": "boolean",
+                "exclusiveMaximum": "boolean"
+            },
+            "startDate": "string",
+            "endDate": "string"
+        }
+    ],
     "publicationDetails": {
-        "publishedDate": "",
-        "source": ""
+        "publicationDate": "string",
+        "bodsVersion": "string",
+        "license": "string",
+        "publisher": {
+            "name": "string",
+            "url": "string"
+        }
     },
     "source": {
-        "statementSource": "",
-        "additionalSource": []
+        "type": ["string"],
+        "description": "string",
+        "url": "string",
+        "retrievedAt": "string"
     },
-    "annotations": [],
-    "replacesStatements": []
+    "assertedBy": [
+        {
+            "name": "string",
+            "uri": "string"
+        }
+    ],
+    "annotations": [
+        {
+            "motivation": "string",
+            "statementPointerTarget": "string",
+            "creationDate": "string",
+            "createdBy": {
+                "name": "string",
+                "uri": "string"
+            },
+            "description": "string",
+            "transformedContent": "string",
+            "url": "string"
+        }
+    ],
+    "replacesStatements": ["string"]
 }
 
 entity_statement_schema = {
@@ -480,38 +522,59 @@ entity_statement_schema = {
     "annotations": []
 }
 
+
 person_statement_schema = {
     "statementID": "",
     "statementType": "personStatement",
     "statementDate": "",
     "isComponent": False,
-    "componentStatementIDs": [],
-    "subject": {
-        "name": {
-            "fullName": "",
-            "givenName": "",
-            "familyName": "",
-            "middleName": "",
-            "title": ""
-        },
-        "nationality": "",
-        "countryOfResidence": "",
-        "address": {
-            "addressLine": "",
-            "locality": "",
-            "region": "",
-            "country": "",
-            "postalCode": ""
+    "personType": "",
+    "unspecifiedPersonDetails": {
+        "reason": "",
+        "description": ""
+    },
+    "names": [],
+    "identifiers": [],
+    "nationalities": [],
+    "taxResidencies": [],
+    "addresses": [],
+    "annotations": [],
+    "politicalExposure": {
+        "status": "",
+        "details": {
+            "reason": "",
+            "missingInfoReason": "",
+            "jurisdiction": {
+                "name": "",
+                "code": ""
+            },
+            "startDate": "",
+            "endDate": ""
         }
     },
-    "publiclyAvailable": False,
     "publicationDetails": {
         "publishedDate": "",
-        "source": ""
+        "bodsVersion": "",
+        "license": "",
+        "publisher": {
+            "name": "",
+            "url": ""
+        }
     },
     "source": {
-        "statementSource": "",
-        "additionalSource": []
+        "type": [],
+        "description": "",
+        "url": "",
+        "retrievedAt": "",
+        "assertedBy": [
+            {
+                "name": "",
+                "uri": ""
+            }
+        ]
     },
-    "annotations": []
+    "replacesStatements": "",
 }
+
+
+         

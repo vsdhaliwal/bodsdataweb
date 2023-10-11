@@ -33,13 +33,9 @@
 #                         thing_schema, )
 
 
-import json
+# import json
 
-# Read JSON from a file
-temp = []
-with open('temp.json', 'r', encoding='utf-8') as file:
-    for line in file:
-        data = json.loads(line)
-        temp.append(data)
-
-print(len(temp))
+# with open('./sanction_data/latvia.json', 'r', encoding='utf-8') as file:
+#     for i,line in enumerate(file, 0):
+#         data = json.loads(line)
+#         print(data[i])
