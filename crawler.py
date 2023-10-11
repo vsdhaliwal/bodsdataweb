@@ -91,9 +91,9 @@ def check_for_changes():
         new_sanction = opensanctions()
 
         new_result = [item for item in new_result if item[2] in [
-            #'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/register/json.zip',
+            'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/register/json.zip',
             'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/latvia/json.zip',
-            #'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/gleif/json.zip'
+            'https://s3.eu-west-1.amazonaws.com/oo-bodsdata/data/gleif/json.zip'
         ]]
 
         if new_result != last_result:
@@ -110,12 +110,12 @@ def check_for_changes():
             print("Downloading...")
             download_and_unzip_multiple_files(links, filenames, "./ownership_data")
             print("Unzipped")
-            print("Crawler Re-Started...")
             print("Data insertion Started...")
             all_files = os.listdir("./ownership_data")
             full_paths = [os.path.join("./ownership_data", file) for file in all_files]
             load_ownership_data(full_paths)
             print("Data insertion Done")
+            print("Crawler Re-Started...")
 
         else:
             logger2.info("Ownership Data Unchanged at {}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
@@ -131,10 +131,10 @@ def check_for_changes():
             print("Downloading & Unziping ...")
             download_multiple_files(links, filenames)
             print("Unzipped")
-            print("Crawler Re-Started...")
             print("Data insertion Started...")
             sanction_data_load()
             print("Data insertion Done")
+            print("Crawler Re-Started...")
 
         else:
             logger1.info("Sanctions Data Unchanged at {}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))

@@ -33,9 +33,11 @@
 #                         thing_schema, )
 
 
-# import json
+import json
 
-# with open('./sanction_data/latvia.json', 'r', encoding='utf-8') as file:
-#     for i,line in enumerate(file, 0):
-#         data = json.loads(line)
-#         print(data[i])
+with open('./ownership_data/latvia.json', 'r', encoding='utf-8') as file:
+    for i, line in enumerate(file, 0):
+        data_list = json.loads(line)
+        for data in data_list:
+            schema = data.get('statementType')
+            print(schema)
