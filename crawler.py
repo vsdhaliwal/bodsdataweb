@@ -7,6 +7,7 @@ import time
 import os
 from downloader import download_and_unzip_multiple_files, download_multiple_files
 from data_inp_sanction import sanction_data_load
+from data_inp_ownership import load_ownership_data
 
 logger1 = logging.getLogger('Logger1')
 logger1.setLevel(logging.INFO)
@@ -72,8 +73,6 @@ def scrape_and_process_data():
             date = card_title[-11:-1]
             output.append([name, date, file_url])
 
-    # print(output)
-
     return output
 
 def create_folder_if_not_exists(folder_path):
@@ -111,8 +110,12 @@ def check_for_changes():
             print("Downloading...")
             download_and_unzip_multiple_files(links, filenames, "./ownership_data")
             print("Unzipped")
-            print("Done")
             print("Crawler Re-Started...")
+            print("Data insertion Started...")
+            all_files = os.listdir("./ownership_data")
+            load_ownership_data(all_files)
+            print("Data insertion Done")
+
         else:
             logger2.info("Ownership Data Unchanged at {}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 
@@ -127,7 +130,6 @@ def check_for_changes():
             print("Downloading & Unziping ...")
             download_multiple_files(links, filenames)
             print("Unzipped")
-            print("Done")
             print("Crawler Re-Started...")
             print("Data insertion Started...")
             sanction_data_load()

@@ -1,10 +1,16 @@
 from pymongo import MongoClient
 import json
+import os
 
-client = MongoClient('mongodb://88.198.40.216:27017/')
-db = client['sanction']
+def load_ownership_data(files):
+    client = MongoClient('mongodb://88.198.40.216:27017/')
+    db = client['sanction']
 
-def load_sanction_data(files, collection_name_map):
+    collection_name_map = {
+                'entityStatement': db['entity_statement'],
+                'ownershipOrControlStatement': db['ownership_or_control_statement'],
+                'personStatement': db['person_statement']
+            }
 
     for filename in files:
         with open(filename, 'r', encoding='utf-8') as file:
@@ -21,12 +27,6 @@ def load_sanction_data(files, collection_name_map):
 
     client.close()
 
-if __name__ == "__main__":
-    collection_name_map = {
-        'entityStatement': db['entity_statement'],
-        'ownershipOrControlStatement': db['ownership_or_control_statement'],
-        'personStatement': db['person_statement']
-    }
+    for filename in files:
+        os.remove(filename)
 
-    filenames = ['./sanction_data/latvia.json', './sanction_data/another_file.json']
-    load_sanction_data(filenames, collection_name_map)

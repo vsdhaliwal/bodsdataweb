@@ -28,7 +28,7 @@ def download_and_unzip_multiple_files(urls, local_filenames, destination_folder)
         zip_file = local_filename
         print(f'Unzipping started: {zip_file}')
         unzip_file(zip_file, destination_folder)
-        os.remove(zip_file)  # Delete the original zip file
+        os.remove(zip_file) 
 
 def download_multiple_files(urls, local_filenames):
     downloaded_files = []
